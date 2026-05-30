@@ -12,10 +12,12 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Credenciais do Supabase não encontradas.');
+  console.error('Credenciais do Supabase não encontradas. O salvamento no banco não vai funcionar.');
 }
 
-const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+const supabase = (supabaseUrl && supabaseKey) 
+  ? createClient(supabaseUrl, supabaseKey) 
+  : null;
 
 // Health check endpoint para o Render
 app.get('/', (req, res) => {
@@ -41,12 +43,16 @@ app.post('/scrape', async (req, res) => {
     const resultados = await olxScraper.scrape(cidade, tipo);
 
     if (resultados.length > 0) {
-      console.log(`[Webhook] Salvando ${resultados.length} imóveis no Supabase...`);
-      const { error } = await supabase.from('imoveis').upsert(resultados, { onConflict: 'url_original' });
-      
-      if (error) {
-        console.error('Erro ao salvar no Supabase:', error);
-        return res.status(500).json({ error: 'Erro ao salvar resultados no Supabase.' });
+      if (supabase) {
+        console.log(`[Webhook] Salvando ${resultados.length} imóveis no Supabase...`);
+        const { error } = await supabase.from('imoveis').upsert(resultados, { onConflict: 'url_original' });
+        
+        if (error) {
+          console.error('Erro ao salvar no Supabase:', error);
+          return res.status(500).json({ error: 'Erro ao salvar resultados no Supabase.' });
+        }
+      } else {
+        console.log('[Webhook] Supabase não configurado. Imóveis raspados mas não salvos no banco.');
       }
     }
     
