@@ -8,14 +8,15 @@ import OpcaoSimples from './perguntas/OpcaoSimples';
 import MultiSelect from './perguntas/MultiSelect';
 import SliderPreco from './perguntas/SliderPreco';
 import InputTexto from './perguntas/InputTexto';
+import InputAutocomplete from './perguntas/InputAutocomplete';
 
 const PERGUNTAS = [
   // Seção 1
   { id: 0, titulo: 'Você quer alugar ou comprar um imóvel?', tipo: 'opcao', opcoes: ['Alugar', 'Comprar'], secao: 1, peso: 7.5 },
   { id: 1, titulo: 'Qual tipo de imóvel você procura?', tipo: 'opcao', opcoes: ['Apartamento', 'Casa', 'Cobertura', 'Studio/Kitnet', 'Qualquer um'], secao: 1, peso: 7.5 },
   // Seção 2
-  { id: 2, titulo: 'Em qual cidade você quer buscar?', subtitulo: 'Ex: São Paulo, Rio de Janeiro', tipo: 'texto', placeholder: 'Digite a cidade', secao: 2, peso: 7 },
-  { id: 3, titulo: 'Tem bairros ou regiões preferidas?', subtitulo: 'Opcional (separe por vírgula)', tipo: 'texto', placeholder: 'Ex: Pinheiros, Vila Madalena', secao: 2, peso: 6 },
+  { id: 2, titulo: 'Em qual cidade você quer buscar?', subtitulo: 'Ex: São Paulo, Rio de Janeiro', tipo: 'autocomplete', autocompleteTipo: 'cidade', placeholder: 'Digite a cidade', secao: 2, peso: 7 },
+  { id: 3, titulo: 'Tem bairros ou regiões preferidas?', subtitulo: 'Opcional (separe por vírgula)', tipo: 'autocomplete', autocompleteTipo: 'bairro', placeholder: 'Ex: Pinheiros, Vila Madalena', secao: 2, peso: 6 },
   { id: 4, titulo: 'Qual o raio máximo de distância do centro dos bairros?', tipo: 'opcao', opcoes: ['Até 5km', 'Até 10km', 'Até 15km', 'Até 20km', 'Sem limite'], secao: 2, peso: 7 },
   // Seção 3
   { id: 5, titulo: 'Qual é o seu orçamento máximo?', subtitulo: 'Arraste para ajustar o valor', tipo: 'slider', min: 500, max: 20000, step: 100, secao: 3, peso: 8.5 },
@@ -153,6 +154,17 @@ export default function FormularioContainer() {
               )}
               {currentQuestion.tipo === 'texto' && (
                 <InputTexto placeholder={currentQuestion.placeholder} valor={valorAtual} onChange={setRespostaAtual} submitOnEnter={canProceed || currentQuestion.id === 3} onSubmit={handleNext} type={currentQuestion.id === 20 ? 'email' : 'text'} />
+              )}
+              {currentQuestion.tipo === 'autocomplete' && (
+                <InputAutocomplete 
+                  placeholder={currentQuestion.placeholder} 
+                  valor={valorAtual} 
+                  onChange={setRespostaAtual} 
+                  submitOnEnter={canProceed || currentQuestion.id === 3} 
+                  onSubmit={handleNext} 
+                  tipo={currentQuestion.autocompleteTipo}
+                  cidadeContext={respostas['q2']}
+                />
               )}
             </PerguntaCard>
           </AnimatePresence>
