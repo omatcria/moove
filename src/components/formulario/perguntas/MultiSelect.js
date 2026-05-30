@@ -1,4 +1,4 @@
-export default function MultiSelect({ opções, valores = [], onChange }) {
+export default function MultiSelect({ opcoes, valores = [], onChange }) {
   const toggleOpcao = (opcao) => {
     if (valores.includes(opcao)) {
       onChange(valores.filter(v => v !== opcao));
@@ -9,7 +9,7 @@ export default function MultiSelect({ opções, valores = [], onChange }) {
 
   return (
     <div className="flex flex-col gap-3 mt-4">
-      {opções.map((opcao) => (
+      {opcoes.map((opcao) => (
         <button
           key={opcao}
           onClick={() => toggleOpcao(opcao)}

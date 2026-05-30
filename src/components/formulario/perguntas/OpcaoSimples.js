@@ -1,7 +1,7 @@
-export default function OpcaoSimples({ opções, valor, onChange }) {
+export default function OpcaoSimples({ opcoes, valor, onChange }) {
   return (
     <div className="flex flex-col gap-3 mt-4">
-      {opções.map((opcao) => (
+      {opcoes.map((opcao) => (
         <button
           key={opcao}
           onClick={() => onChange(opcao)}
