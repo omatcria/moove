@@ -86,36 +86,16 @@ export default function FormularioContainer() {
       setStep(nextStep);
     } else {
       // Finalizar formulário
-      if (respostas['q21'] === 'Banco de dados da nossa planilha') {
-        setEnviandoWebhook(true);
-        try {
-          const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || 'https://n8n.amais.io/webhook/moove-busca';
-          // Dispara async
-          fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              origem: 'formulario_moove',
-              data: new Date().toISOString(),
-              planilha_url: 'https://docs.google.com/spreadsheets/d/1EHBshiv_Ov_SfBmMw5nupxzsH88PChQ9_QJyjRJV8Vs/edit?usp=sharing',
-              preferencias: respostas
-            })
-          }).catch(e => console.error(e));
-        } catch (err) {
-          console.error('Erro ao enviar webhook pro n8n:', err);
-        }
-        setEnviandoWebhook(false);
-      } else {
-        if (respostas['q19'] === 'Sim' && respostas['q20']) {
-          fetch('/api/salvar-busca', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: respostas['q20'],
-              preferencias: respostas
-            })
-          }).catch(e => console.error(e));
-        }
+      // O webhook será chamado agora pela rota /api/buscar na tela de Resultados!
+      if (respostas['q19'] === 'Sim' && respostas['q20']) {
+        fetch('/api/salvar-busca', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: respostas['q20'],
+            preferencias: respostas
+          })
+        }).catch(e => console.error(e));
       }
       // Em ambos os casos, redireciona para ver os resultados com UX do Airbnb
       router.push('/resultados');
