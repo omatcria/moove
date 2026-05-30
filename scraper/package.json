@@ -4,8 +4,7 @@
   "description": "Scraping bot for MOOVE",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "build": "npx playwright install chromium"
+    "start": "node index.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
