@@ -48,7 +48,6 @@ export default function FormularioContainer() {
   const [step, setStep] = useState(0);
   const [respostas, setRespostas] = useState({});
   const [mounted, setMounted] = useState(false);
-  const [showPlanilhaSuccess, setShowPlanilhaSuccess] = useState(false);
   const [enviandoWebhook, setEnviandoWebhook] = useState(false);
 
   useEffect(() => {
@@ -91,7 +90,8 @@ export default function FormularioContainer() {
         setEnviandoWebhook(true);
         try {
           const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || 'https://n8n.amais.io/webhook/moove-busca';
-          await fetch(webhookUrl, {
+          // Dispara async
+          fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -100,29 +100,25 @@ export default function FormularioContainer() {
               planilha_url: 'https://docs.google.com/spreadsheets/d/1EHBshiv_Ov_SfBmMw5nupxzsH88PChQ9_QJyjRJV8Vs/edit?usp=sharing',
               preferencias: respostas
             })
-          });
+          }).catch(e => console.error(e));
         } catch (err) {
           console.error('Erro ao enviar webhook pro n8n:', err);
         }
         setEnviandoWebhook(false);
-        setShowPlanilhaSuccess(true);
       } else {
         if (respostas['q19'] === 'Sim' && respostas['q20']) {
-          try {
-            await fetch('/api/salvar-busca', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: respostas['q20'],
-                preferencias: respostas
-              })
-            });
-          } catch (err) {
-            console.error('Erro ao salvar busca:', err);
-          }
+          fetch('/api/salvar-busca', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: respostas['q20'],
+              preferencias: respostas
+            })
+          }).catch(e => console.error(e));
         }
-        router.push('/resultados');
       }
+      // Em ambos os casos, redireciona para ver os resultados com UX do Airbnb
+      router.push('/resultados');
     }
   };
 
@@ -146,31 +142,6 @@ export default function FormularioContainer() {
 
   const valorAtual = respostas[`q${step}`];
   const canProceed = valorAtual !== undefined && valorAtual !== '' && (currentQuestion.tipo !== 'multi' || valorAtual.length >= 0);
-
-  if (showPlanilhaSuccess) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-sm border border-gray-100">
-          <div className="w-16 h-16 bg-brand-light text-brand-primary rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Busca enviada com sucesso!</h2>
-          <p className="text-gray-600 mb-8">
-            Nossa equipe já recebeu suas preferências e irá consultar nosso banco de dados exclusivo da planilha.
-            Entraremos em contato em breve!
-          </p>
-          <button 
-            onClick={() => router.push('/')}
-            className="btn-primary w-full"
-          >
-            Voltar ao Início
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
