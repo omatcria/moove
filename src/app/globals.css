@@ -8,8 +8,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  --color-brand-primary: #00A699;
+  --color-brand-dark: #007D75;
+  --color-brand-light: #E6F7F6;
+  
+  --color-score-high: #00C16A;
+  --color-score-mid: #F5A623;
+  --color-score-low: #E74C3C;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +30,20 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-primary text-white rounded-xl px-6 py-3 font-semibold hover:bg-brand-dark transition;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden;
+  }
+  .input-base {
+    @apply border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary;
+  }
+  .badge-score-high {
+    @apply bg-score-high text-white text-sm font-bold px-3 py-1 rounded-full;
+  }
 }

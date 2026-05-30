@@ -1,0 +1,15 @@
+{
+  "name": "moove-scraper",
+  "version": "1.0.0",
+  "description": "Scraping bot for MOOVE",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
+    "dotenv": "^16.0.3",
+    "node-cron": "^3.0.2",
+    "playwright": "^1.41.0"
+  }
+}
